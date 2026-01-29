@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact CodeNest - Get in touch with us for questions, feedback, or support">
+    <title>Contact Us - CodeNest</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="logo" onclick="window.location.href='index.html'">
+                <span class="logo-icon">⟨/⟩</span>
+                <span class="logo-text">CodeNest</span>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="courses.html" class="nav-link">Courses</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link active">Contact</a>
+            </div>
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="header-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+        </div>
+        <div class="container">
+            <h1 class="page-title">Contact Us</h1>
+            <p class="page-description">We'd love to hear from you</p>
+        </div>
+    </section>
+
+    <section style="padding: var(--spacing-4xl) 0;">
+        <div class="container">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div
+                    style="padding: var(--spacing-2xl); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl);">
+                    <h2 style="font-size: var(--font-size-2xl); margin-bottom: var(--spacing-lg);">Send us a message
+                    </h2>
+
+                    <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label
+                                style="display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm);">Name</label>
+                            <input type="text" id="contactName" required
+                                style="width: 100%; padding: var(--spacing-md); background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-family: var(--font-primary); font-size: var(--font-size-base);">
+                        </div>
+
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label
+                                style="display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm);">Email</label>
+                            <input type="email" id="contactEmail" required
+                                style="width: 100%; padding: var(--spacing-md); background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-family: var(--font-primary); font-size: var(--font-size-base);">
+                        </div>
+
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <label
+                                style="display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm);">Subject</label>
+                            <input type="text" id="contactSubject" required
+                                style="width: 100%; padding: var(--spacing-md); background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-family: var(--font-primary); font-size: var(--font-size-base);">
+                        </div>
+
+                        <div style="margin-bottom: var(--spacing-xl);">
+                            <label
+                                style="display: block; font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-sm);">Message</label>
+                            <textarea id="contactMessage" required rows="6"
+                                style="width: 100%; padding: var(--spacing-md); background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--color-text-primary); font-family: var(--font-primary); font-size: var(--font-size-base); resize: vertical;"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+
+                <div style="margin-top: var(--spacing-3xl); text-align: center;">
+                    <h3 style="font-size: var(--font-size-xl); margin-bottom: var(--spacing-lg);">Other ways to reach us
+                    </h3>
+                    <p style="color: var(--color-text-secondary); margin-bottom: var(--spacing-md);">
+                        📧 Email: support@codenest.com
+                    </p>
+                    <p style="color: var(--color-text-secondary);">
+                        💬 Follow us on social media for updates
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <span class="logo-icon">⟨/⟩</span>
+                        <span class="logo-text">CodeNest</span>
+                    </div>
+                    <p class="footer-description">
+                        Your destination for learning programming through comprehensive, reading-focused courses.
+                    </p>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-title">Platform</h4>
+                    <ul class="footer-links">
+                        <li><a href="courses.html">Courses</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-title">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 class="footer-title">Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CodeNest. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            // In a real application, this would send to a backend
+            console.log('Contact form submitted:', { name, email, subject, message });
+
+            alert('Thank you for your message! We will get back to you soon.');
+            document.getElementById('contactForm').reset();
+        }
+    </script>
+</body>
+
+</html>
