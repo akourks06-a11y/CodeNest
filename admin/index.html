@@ -347,7 +347,7 @@
 
     <!-- Custom Modal for Adding Ads -->
     <div id="addAdModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content">
             <div class="modal-header">
                 <h2>Create New Ad Campaign</h2>
                 <button class="close-modal" onclick="closeAdModal()">&times;</button>
@@ -355,15 +355,15 @@
             <div class="modal-body">
                 <form id="addAdForm" onsubmit="handleAdSubmit(event)">
                     <div class="form-group">
-                        <label>Ad Name (Internal)</label>
-                        <input type="text" name="name" class="form-control" placeholder="e.g., Summer Promotion"
-                            required>
+                        <label class="form-label">Ad Name <small>(Internal use)</small></label>
+                        <input type="text" name="name" class="form-input"
+                            placeholder="e.g., Summer Promotion - Homepage Banner" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Placement</label>
-                            <select name="placement" class="form-control">
+                            <label class="form-label">Ad Placement</label>
+                            <select name="placement" class="form-select">
                                 <option value="header">Home Header (Top)</option>
                                 <option value="footer">Footer (All Pages)</option>
                                 <option value="sidebar">Sidebar (Admin/Courses)</option>
@@ -372,45 +372,58 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Ad Type</label>
-                            <select name="type" class="form-control" onchange="toggleAdType(this.value)">
+                            <label class="form-label">Ad Type</label>
+                            <select name="type" class="form-select" onchange="toggleAdType(this.value)">
                                 <option value="image">Image Banner</option>
-                                <option value="code">HTML/JS Code</option>
+                                <option value="code">Custom HTML/JS</option>
                             </select>
                         </div>
                     </div>
 
-                    <!-- Image Fields -->
+                    <!-- Image Banner Fields -->
                     <div id="adTypeImage">
                         <div class="form-group">
-                            <label>Image URL</label>
-                            <input type="text" name="imageUrl" class="form-control" placeholder="https://...">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" name="imageUrl" class="form-input"
+                                placeholder="https://example.com/banner.jpg">
+                            <small
+                                style="color: var(--admin-text-tertiary); font-size: 12px; margin-top: 4px; display: block;">
+                                Recommended sizes: 728x90 (leaderboard), 300x250 (medium rectangle)
+                            </small>
                         </div>
                         <div class="form-group">
-                            <label>Target Link</label>
-                            <input type="text" name="linkUrl" class="form-control" placeholder="https://...">
+                            <label class="form-label">Target Link URL</label>
+                            <input type="url" name="linkUrl" class="form-input"
+                                placeholder="https://example.com/landing-page">
                         </div>
                     </div>
 
-                    <!-- Code Fields -->
+                    <!-- HTML/JS Code Fields -->
                     <div id="adTypeCode" style="display: none;">
                         <div class="form-group">
-                            <label>Ad Code (HTML/Script)</label>
-                            <textarea name="htmlCode" class="form-control" rows="5"
-                                placeholder="<script>...</script>"></textarea>
-                            <small style="color: var(--color-text-tertiary);">Paste your AdSense or custom HTML code
-                                here.</small>
+                            <label class="form-label">Ad Code (HTML/Script)</label>
+                            <textarea name="htmlCode" class="form-textarea" rows="6"
+                                placeholder="<script async src=&quot;...&quot;></script>"></textarea>
+                            <small
+                                style="color: var(--admin-text-tertiary); font-size: 12px; margin-top: 4px; display: block;">
+                                Paste your Google AdSense, custom HTML, or JavaScript code here
+                            </small>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Max Impressions (0 = Unlimited)</label>
-                        <input type="number" name="maxImpressions" class="form-control" value="0">
+                        <label class="form-label">Max Impressions <small>(0 = Unlimited)</small></label>
+                        <input type="number" name="maxImpressions" class="form-input" value="0" min="0">
                     </div>
 
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeAdModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create Ad</button>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 5v14M5 12h14"></path>
+                            </svg>
+                            Create Ad Campaign
+                        </button>
                     </div>
                 </form>
             </div>

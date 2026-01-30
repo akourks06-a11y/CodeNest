@@ -829,12 +829,23 @@ function handleAdSubmit(event) {
 }
 
 function showAddAdModal() {
-    document.getElementById('addAdModal').style.display = 'flex';
+    const modal = document.getElementById('addAdModal');
+    if (modal) {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent background scroll
+    }
 }
 
 function closeAdModal() {
-    document.getElementById('addAdModal').style.display = 'none';
-    document.getElementById('addAdForm').reset();
+    const modal = document.getElementById('addAdModal');
+    if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = ''; // Restore scroll
+    }
+    const form = document.getElementById('addAdForm');
+    if (form) form.reset();
+    // Reset to image type by default
+    toggleAdType('image');
 }
 
 function editAd(adId) {
