@@ -67,6 +67,12 @@
                     </svg>
                     <span>Comments</span>
                 </a>
+                <a href="#social" class="sidebar-link" data-section="social">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                    <span>Social Media</span>
+                </a>
             </nav>
         </aside>
 
@@ -156,6 +162,36 @@
 
                 <div class="comments-admin-list" id="commentsAdminList">
                     <!-- Comments will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Social Media Section -->
+            <section class="admin-section" id="social-section">
+                <div class="section-header">
+                    <h1 class="section-title">Social Media Links</h1>
+                    <button class="btn btn-primary" onclick="showAddSocialLinkModal()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Add Link
+                    </button>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table" id="socialTable">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Platform</th>
+                                <th>URL</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Social links will be loaded dynamically -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>

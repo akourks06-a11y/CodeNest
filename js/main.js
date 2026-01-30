@@ -6,6 +6,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initHomePage();
+    loadSocialLinks();
+    trackVisit();
 });
 
 // Navigation
@@ -195,4 +197,35 @@ function smoothScrollTo(element) {
         behavior: 'smooth',
         block: 'start'
     });
+}
+
+// Social Links and Tracking
+function loadSocialLinks() {
+    const container = document.getElementById('socialLinksContainer');
+    if (!container) return;
+
+    try {
+        const links = dataManager.getSocialLinks();
+        if (links.length > 0) {
+            container.innerHTML = links.map(link => `
+                <a href="${link.url}" class="social-link" aria-label="${link.name}" target="_blank" rel="noopener noreferrer">
+                    ${link.icon}
+                </a>
+            `).join('');
+        }
+    } catch (e) {
+        console.error('Error loading social links:', e);
+    }
+}
+
+function trackVisit() {
+    try {
+        // Simple session check to avoid counting every refresh in short succession (optional)
+        if (!sessionStorage.getItem('visitTracked')) {
+            dataManager.incrementVisit();
+            sessionStorage.setItem('visitTracked', 'true');
+        }
+    } catch (e) {
+        console.error('Error tracking visit:', e);
+    }
 }

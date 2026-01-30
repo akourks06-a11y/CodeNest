@@ -17,6 +17,7 @@ function initAdminDashboard() {
     loadLanguagesTable();
     loadCoursesTable();
     loadCommentsAdmin();
+    loadSocialMediaTable();
 }
 
 // Navigation
@@ -90,14 +91,144 @@ function loadDashboardStats() {
             <div class="stat-card-header">
                 <div class="stat-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        <path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                     </svg>
                 </div>
             </div>
-            <div class="stat-card-value">${stats.avgRating.toFixed(1)}</div>
-            <div class="stat-card-label">Average Rating</div>
+            <div class="stat-card-value">${stats.totalVisits}</div>
+            <div class="stat-card-label">Total Site Visits</div>
         </div>
     `;
+}
+
+// Social Media Management
+function loadSocialMediaTable() {
+    const links = dataManager.getSocialLinks();
+    const tbody = document.querySelector('#socialTable tbody');
+
+    if (links.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 3rem; color: var(--color-text-secondary);">
+                    No social media links found. Add your first link!
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = links.map(link => `
+        <tr>
+            <td><span class="table-icon" style="color: black;">${link.icon}</span></td>
+            <td><strong>${link.name}</strong></td>
+            <td><a href="${link.url}" target="_blank" style="color: var(--color-primary);">${link.url}</a></td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-icon btn-edit" onclick="editSocialLink('${link.id}')" title="Edit">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="deleteSocialLink('${link.id}')" title="Delete">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function showAddSocialLinkModal() {
+    const modal = createModal('Add Social Media Link', `
+        <div class="form-group">
+            <label class="form-label">Platform Name</label>
+            <input type="text" class="form-input" id="socialName" placeholder="e.g., Instagram">
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL</label>
+            <input type="url" class="form-input" id="socialUrl" placeholder="https://...">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Icon (SVG Code)</label>
+            <textarea class="form-textarea" id="socialIcon" rows="3" placeholder="Paste SVG code here..."></textarea>
+        </div>
+    `, [
+        { text: 'Cancel', class: 'btn-secondary', onClick: closeModal },
+        { text: 'Add Link', class: 'btn-primary', onClick: saveNewSocialLink }
+    ]);
+
+    showModal(modal);
+}
+
+function saveNewSocialLink() {
+    const name = document.getElementById('socialName').value.trim();
+    const url = document.getElementById('socialUrl').value.trim();
+    const icon = document.getElementById('socialIcon').value.trim();
+
+    if (!name || !url || !icon) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    dataManager.addSocialLink({ name, url, icon });
+    loadSocialMediaTable();
+    closeModal();
+    showNotification('Social link added successfully!', 'success');
+}
+
+function editSocialLink(id) {
+    const links = dataManager.getSocialLinks();
+    const link = links.find(l => l.id === id);
+
+    if (!link) return;
+
+    const modal = createModal('Edit Social Media Link', `
+        <div class="form-group">
+            <label class="form-label">Platform Name</label>
+            <input type="text" class="form-input" id="socialName" value="${link.name}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">URL</label>
+            <input type="url" class="form-input" id="socialUrl" value="${link.url}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Icon (SVG Code)</label>
+            <textarea class="form-textarea" id="socialIcon" rows="3">${link.icon}</textarea>
+        </div>
+    `, [
+        { text: 'Cancel', class: 'btn-secondary', onClick: closeModal },
+        { text: 'Save Changes', class: 'btn-primary', onClick: () => updateSocialLink(id) }
+    ]);
+
+    showModal(modal);
+}
+
+function updateSocialLink(id) {
+    const name = document.getElementById('socialName').value.trim();
+    const url = document.getElementById('socialUrl').value.trim();
+    const icon = document.getElementById('socialIcon').value.trim();
+
+    if (!name || !url || !icon) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    dataManager.updateSocialLink(id, { name, url, icon });
+    loadSocialMediaTable();
+    closeModal();
+    showNotification('Social link updated successfully!', 'success');
+}
+
+function deleteSocialLink(id) {
+    if (confirm('Are you sure you want to delete this social link?')) {
+        dataManager.deleteSocialLink(id);
+        loadSocialMediaTable();
+        showNotification('Social link deleted successfully!', 'success');
+    }
 }
 
 // Languages Management
