@@ -90,9 +90,24 @@ function loadDashboardStats() {
         </div>
         <div class="stat-card">
             <div class="stat-card-header">
+                <div class="stat-card-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card-value">${stats.totalPDFs}</div>
+            <div class="stat-card-label">Total PDF Files</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
                 <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--color-warning);">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.5 8.38 8.38 0 0 1 3.8.9L21 11.5z"></path>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
                 </div>
             </div>
@@ -625,3 +640,347 @@ function showNotification(message, type) {
         window.showNotification(message, type);
     }
 }
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return date.toLocaleDateString('en-US', options);
+}
+
+// ========================================
+// SITE SETTINGS MANAGEMENT
+// ========================================
+
+function loadSiteSettings() {
+    const settings = dataManager.getSiteSettings();
+
+    // Load general settings
+    const siteNameInput = document.getElementById('settingSiteName');
+    const logoTextInput = document.getElementById('settingLogoText');
+    const primaryColorInput = document.getElementById('settingPrimaryColor');
+    const secondaryColorInput = document.getElementById('settingSecondaryColor');
+    const fontFamilySelect = document.getElementById('settingFontFamily');
+    const darkModeCheckbox = document.getElementById('settingDarkMode');
+    const animationsCheckbox = document.getElementById('settingAnimations');
+
+    if (siteNameInput) siteNameInput.value = settings.identity?.siteName || 'CodeNest';
+    if (logoTextInput) logoTextInput.value = settings.identity?.logotext || 'CodeNest';
+    if (primaryColorInput) primaryColorInput.value = settings.theme?.primaryColor || '#2563eb';
+    if (secondaryColorInput) secondaryColorInput.value = settings.theme?.secondaryColor || '#3b82f6';
+    if (fontFamilySelect) fontFamilySelect.value = settings.theme?.fontFamily || 'Inter';
+    if (darkModeCheckbox) darkModeCheckbox.checked = settings.features?.darkMode !== false;
+    if (animationsCheckbox) animationsCheckbox.checked = settings.features?.animations !== false;
+}
+
+function saveSiteSettings() {
+    const settings = dataManager.getSiteSettings();
+
+    // Update settings from form
+    settings.identity = {
+        siteName: document.getElementById('settingSiteName')?.value || 'CodeNest',
+        logotext: document.getElementById('settingLogoText')?.value || 'CodeNest'
+    };
+
+    settings.theme = {
+        primaryColor: document.getElementById('settingPrimaryColor')?.value || '#2563eb',
+        secondaryColor: document.getElementById('settingSecondaryColor')?.value || '#3b82f6',
+        fontFamily: document.getElementById('settingFontFamily')?.value || 'Inter'
+    };
+
+    settings.features = {
+        darkMode: document.getElementById('settingDarkMode')?.checked || false,
+        animations: document.getElementById('settingAnimations')?.checked || false
+    };
+
+    // Save to localStorage
+    dataManager.saveSiteSettings(settings);
+
+    showNotification('Settings saved successfully! Refresh public pages to see changes.', 'success');
+}
+
+// ========================================
+// SETTINGS TABS FUNCTIONALITY
+// ========================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize tabs if they exist
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    if (tabButtons.length > 0) {
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.getAttribute('data-tab');
+                switchTab(tabName);
+            });
+        });
+    }
+});
+
+function switchTab(tabName) {
+    // Remove active class from all tabs and contents
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.settings-tab-content').forEach(content => content.classList.remove('active'));
+
+    // Add active class to selected tab
+    const selectedBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+    const selectedContent = document.getElementById(`tab-${tabName}`);
+
+    if (selectedBtn) selectedBtn.classList.add('active');
+    if (selectedContent) selectedContent.classList.add('active');
+}
+
+// ========================================
+// ADS MANAGEMENT
+// ========================================
+
+function loadAdsTable() {
+    const ads = dataManager.getAds();
+    const tbody = document.querySelector('#adsTable tbody');
+
+    if (!tbody) return;
+
+    if (ads.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 3rem; color: var(--color-text-secondary);">
+                    No ads found. Create your first ad campaign!
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = ads.map(ad => {
+        const statusClass = ad.settings.active ? 'badge-success' : 'badge-secondary';
+        const statusText = ad.settings.active ? 'Active' : 'Inactive';
+        const ctr = ad.stats.impressions > 0 ? ((ad.stats.clicks / ad.stats.impressions) * 100).toFixed(2) : '0.00';
+
+        return `
+            <tr>
+                <td><strong>${ad.name}</strong></td>
+                <td><span class="table-badge">${ad.type === 'image' ? 'Image' : 'Code'}</span></td>
+                <td><span class="table-badge badge-primary">${ad.placement}</span></td>
+                <td>${ad.stats.impressions}${ad.settings.maxImpressions > 0 ? ` / ${ad.settings.maxImpressions}` : ''}</td>
+                <td>${ad.stats.clicks} <small style="color: var(--color-text-tertiary);">(${ctr}%)</small></td>
+                <td><span class="table-badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <div class="table-actions">
+                        <button class="btn-icon btn-primary" onclick="toggleAdStatus('${ad.id}')" title="${ad.settings.active ? 'Disable' : 'Enable'}">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                ${ad.settings.active ?
+                '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>' :
+                '<polyline points="20 6 9 17 4 12"></polyline>'}
+                            </svg>
+                        </button>
+                        <button class="btn-icon btn-edit" onclick="editAd('${ad.id}')" title="Edit">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="btn-icon btn-delete" onclick="deleteAd('${ad.id}')" title="Delete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function toggleAdType(type) {
+    const imageFields = document.getElementById('adTypeImage');
+    const codeFields = document.getElementById('adTypeCode');
+
+    if (type === 'image') {
+        imageFields.style.display = 'block';
+        codeFields.style.display = 'none';
+    } else {
+        imageFields.style.display = 'none';
+        codeFields.style.display = 'block';
+    }
+}
+
+function handleAdSubmit(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const adData = {
+        name: formData.get('name'),
+        type: formData.get('type'),
+        placement: formData.get('placement'),
+        content: {
+            imageUrl: formData.get('imageUrl') || '',
+            linkUrl: formData.get('linkUrl') || '',
+            htmlCode: formData.get('htmlCode') || ''
+        },
+        settings: {
+            maxImpressions: parseInt(formData.get('maxImpressions')) || 0
+        }
+    };
+
+    dataManager.addAd(adData);
+    closeAdModal();
+    loadAdsTable();
+    showNotification('Ad created successfully!', 'success');
+}
+
+function showAddAdModal() {
+    document.getElementById('addAdModal').style.display = 'flex';
+}
+
+function closeAdModal() {
+    document.getElementById('addAdModal').style.display = 'none';
+    document.getElementById('addAdForm').reset();
+}
+
+function editAd(adId) {
+    const ads = dataManager.getAds();
+    const ad = ads.find(a => a.id === adId);
+    if (!ad) return;
+
+    // TODO: Implement edit modal with pre-filled data
+    alert(`Edit ad: ${ad.name}\n\nEdit functionality will be fully implemented in the next update.`);
+}
+
+function deleteAd(adId) {
+    if (confirm('Are you sure you want to delete this ad?')) {
+        dataManager.deleteAd(adId);
+        loadAdsTable();
+        showNotification('Ad deleted successfully!', 'success');
+    }
+}
+
+function toggleAdStatus(adId) {
+    const ads = dataManager.getAds();
+    const ad = ads.find(a => a.id === adId);
+    if (!ad) return;
+
+    ad.settings.active = !ad.settings.active;
+    dataManager.updateAd(adId, ad);
+    loadAdsTable();
+    showNotification(`Ad ${ad.settings.active ? 'enabled' : 'disabled'} successfully!`, 'success');
+}
+
+// ========================================
+// LESSON MANAGEMENT
+// ========================================
+
+function manageLessons(courseId) {
+    const course = dataManager.getCourseById(courseId);
+    if (!course) {
+        alert('Course not found');
+        return;
+    }
+
+    const lessonsHTML = course.lessons && course.lessons.length > 0
+        ? course.lessons.map((lesson, index) => `
+            <div class="lesson-item" style="padding: 1rem; border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${index + 1}. ${lesson.title || 'Untitled Lesson'}</strong>
+                        <p style="margin: 0.25rem 0 0 0; color: var(--color-text-secondary); font-size: 0.875rem;">
+                            ${lesson.content ? lesson.content.substring(0, 100) + '...' : 'No content'}
+                        </p>
+                    </div>
+                    <button class="btn btn-sm btn-delete" onclick="deleteLesson('${courseId}', ${index})">Delete</button>
+                </div>
+            </div>
+        `).join('')
+        : '<p style="text-align: center; color: var(--color-text-secondary); padding: 2rem;">No lessons yet. Add your first lesson!</p>';
+
+    const modal = createModal(`Manage Lessons: ${course.title}`, `
+        <div style="max-height: 400px; overflow-y: auto;">
+            ${lessonsHTML}
+        </div>
+        <div style="margin-top: 1rem;">
+            <button class="btn btn-primary" onclick="showAddLessonForm('${courseId}')">Add New Lesson</button>
+        </div>
+    `, [
+        { text: 'Close', class: 'btn-secondary', onClick: closeModal }
+    ]);
+
+    showModal(modal);
+}
+
+function showAddLessonForm(courseId) {
+    closeModal();
+    const modal = createModal('Add New Lesson', `
+        <div class="form-group">
+            <label class="form-label">Lesson Title</label>
+            <input type="text" class="form-input" id="lessonTitle" placeholder="e.g., Introduction to Variables">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Lesson Content (Markdown)</label>
+            <textarea class="form-textarea" id="lessonContent" rows="10" placeholder="# Lesson Content\n\nWrite your lesson content here in Markdown format..."></textarea>
+        </div>
+    `, [
+        { text: 'Cancel', class: 'btn-secondary', onClick: () => manageLessons(courseId) },
+        { text: 'Add Lesson', class: 'btn-primary', onClick: () => saveNewLesson(courseId) }
+    ]);
+
+    showModal(modal);
+}
+
+function saveNewLesson(courseId) {
+    const title = document.getElementById('lessonTitle').value.trim();
+    const content = document.getElementById('lessonContent').value.trim();
+
+    if (!title || !content) {
+        alert('Please fill in both title and content');
+        return;
+    }
+
+    const course = dataManager.getCourseById(courseId);
+    if (!course) return;
+
+    const newLesson = {
+        id: dataManager.generateId('lesson'),
+        title: title,
+        content: content,
+        pdfs: []
+    };
+
+    if (!course.lessons) course.lessons = [];
+    course.lessons.push(newLesson);
+
+    dataManager.updateCourse(courseId, course);
+    loadCoursesTable();
+    loadDashboardStats();
+
+    closeModal();
+    showNotification('Lesson added successfully!', 'success');
+
+    // Reopen lesson manager
+    setTimeout(() => manageLessons(courseId), 300);
+}
+
+function deleteLesson(courseId, lessonIndex) {
+    if (!confirm('Are you sure you want to delete this lesson?')) return;
+
+    const course = dataManager.getCourseById(courseId);
+    if (!course || !course.lessons) return;
+
+    course.lessons.splice(lessonIndex, 1);
+    dataManager.updateCourse(courseId, course);
+    loadCoursesTable();
+    loadDashboardStats();
+
+    closeModal();
+    showNotification('Lesson deleted successfully!', 'success');
+
+    // Reopen lesson manager
+    setTimeout(() => manageLessons(courseId), 300);
+}
+
+// Initialize ads table when on ads tab
+document.addEventListener('DOMContentLoaded', () => {
+    const adsTable = document.getElementById('adsTable');
+    if (adsTable) {
+        loadAdsTable();
+    }
+});
+

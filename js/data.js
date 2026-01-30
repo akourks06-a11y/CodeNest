@@ -324,7 +324,6 @@ class DataManager {
         const languages = this.getLanguages();
         const comments = this.getComments();
         const siteStats = this.getSiteStats();
-        // Calculate total real courses
         const courses = this.getCourses();
 
         // Calculate total lessons across all courses
@@ -332,10 +331,19 @@ class DataManager {
             return sum + (course.lessons ? course.lessons.length : 0);
         }, 0);
 
+        // Calculate total PDFs across all lessons
+        const totalPDFs = courses.reduce((sum, course) => {
+            if (!course.lessons) return sum;
+            return sum + course.lessons.reduce((lessonSum, lesson) => {
+                return lessonSum + (lesson.pdfs ? lesson.pdfs.length : 0);
+            }, 0);
+        }, 0);
+
         return {
             totalLanguages: languages.length,
             totalCourses: courses.length,
             totalLessons: totalLessons,
+            totalPDFs: totalPDFs,
             totalComments: comments.length,
             avgRating: this.calculateAverageRating(),
             totalVisits: siteStats.totalVisits || 0
