@@ -59,10 +59,12 @@ function loadRealStats() {
     // Update DOM elements with targets
     const coursesEl = document.getElementById('statCourses');
     const languagesEl = document.getElementById('statLanguages');
+    const lessonsEl = document.getElementById('statLessons');
     const visitsEl = document.getElementById('statStudents');
 
     if (coursesEl) coursesEl.setAttribute('data-target', stats.totalCourses);
     if (languagesEl) languagesEl.setAttribute('data-target', stats.totalLanguages);
+    if (lessonsEl) lessonsEl.setAttribute('data-target', stats.totalLessons);
     if (visitsEl) visitsEl.setAttribute('data-target', stats.totalVisits);
 
     // Trigger animation
@@ -114,26 +116,24 @@ function loadLanguagesGrid() {
 
     if (languages.length === 0) {
         grid.innerHTML = `
-            <div class="empty-state">
-                <p>No languages available yet.</p>
+            <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📂</div>
+                <h3>No categories available</h3>
+                <p>Check back soon for new programming paths!</p>
             </div>
         `;
         return;
     }
 
     grid.innerHTML = languages.map(lang => `
-        <div class="language-card" onclick="navigateToLanguage('${lang.id}')">
-            <div class="language-icon">${lang.icon}</div>
+        <div class="language-card" onclick="window.location.href='courses.html?language=${lang.id}'">
+            <div class="language-icon">
+                ${lang.icon}
+            </div>
             <h3 class="language-name">${lang.name}</h3>
             <p class="language-description">${lang.description}</p>
             <div class="language-stats">
-                <span class="language-stat">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                    ${lang.courseCount} courses
-                </span>
+                <span>${lang.courseCount} Courses</span>
             </div>
         </div>
     `).join('');

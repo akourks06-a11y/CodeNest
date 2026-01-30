@@ -59,27 +59,16 @@ function initSidebarNavigation() {
 // Dashboard Stats
 function loadDashboardStats() {
     const stats = dataManager.getStats();
-    const statsGrid = document.getElementById('statsGrid');
+    const statsGrid = document.getElementById('dashboard-stats-grid');
+    if (!statsGrid) return;
 
     statsGrid.innerHTML = `
         <div class="stat-card">
             <div class="stat-card-header">
-                <div class="stat-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <div class="stat-card-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--color-primary);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="stat-card-value">${stats.totalLanguages}</div>
-            <div class="stat-card-label">Programming Languages</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-card-header">
-                <div class="stat-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
                 </div>
             </div>
@@ -88,20 +77,35 @@ function loadDashboardStats() {
         </div>
         <div class="stat-card">
             <div class="stat-card-header">
-                <div class="stat-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                <div class="stat-card-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-card-value">${stats.totalLessons}</div>
+            <div class="stat-card-label">Total Lessons</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-card-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--color-warning);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.5 8.38 8.38 0 0 1 3.8.9L21 11.5z"></path>
                     </svg>
                 </div>
             </div>
             <div class="stat-card-value">${stats.totalComments}</div>
-            <div class="stat-card-label">User Comments</div>
+            <div class="stat-card-label">Total Comments</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-header">
-                <div class="stat-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15 3h6v6M10 14L21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <div class="stat-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                 </div>
             </div>
