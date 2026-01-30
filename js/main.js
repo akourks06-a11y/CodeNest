@@ -37,6 +37,32 @@ function applySiteSettings() {
         style.innerHTML = `*, *::before, *::after { animation: none !important; transition: none !important; }`;
         document.head.appendChild(style);
     }
+
+    // Ads (Header Banner)
+    if (settings.ads && settings.ads.headerAd.enabled) {
+        injectHeaderAd(settings.ads.headerAd);
+    }
+}
+
+function injectHeaderAd(adConfig) {
+    if (!adConfig.imageUrl) return;
+
+    const languagesSection = document.querySelector('.languages-section');
+    if (languagesSection) {
+        const adContainer = document.createElement('div');
+        adContainer.className = 'container';
+        adContainer.style.marginBottom = '2rem';
+        adContainer.style.textAlign = 'center';
+
+        adContainer.innerHTML = `
+            <a href="${adConfig.linkUrl || '#'}" target="_blank" rel="noopener noreferrer" style="display: inline-block; max-width: 100%; transition: transform 0.2s;">
+                <img src="${adConfig.imageUrl}" alt="Sponsored" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            </a>
+            <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-top: 0.5rem;">Advertisement</div>
+        `;
+
+        languagesSection.parentNode.insertBefore(adContainer, languagesSection);
+    }
 }
 
 // Navigation

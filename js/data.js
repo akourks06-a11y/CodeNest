@@ -57,6 +57,10 @@ class DataManager {
                 features: {
                     darkMode: true,
                     animations: true
+                },
+                ads: {
+                    headerAd: { enabled: false, imageUrl: '', linkUrl: '' },
+                    sidebarAd: { enabled: false, imageUrl: '', linkUrl: '' }
                 }
             };
             this.saveSiteSettings(defaultSettings);
@@ -388,7 +392,11 @@ class DataManager {
         return JSON.parse(localStorage.getItem('siteSettings')) || {
             identity: { siteName: 'CodeNest', logotext: 'CodeNest' },
             theme: { primaryColor: '#2563eb', secondaryColor: '#3b82f6', fontFamily: 'Inter' },
-            features: { darkMode: true, animations: true }
+            features: { darkMode: true, animations: true },
+            ads: {
+                headerAd: { enabled: false, imageUrl: '', linkUrl: '' },
+                sidebarAd: { enabled: false, imageUrl: '', linkUrl: '' }
+            }
         };
     }
 
