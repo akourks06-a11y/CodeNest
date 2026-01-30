@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Viewer - CodeNest</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        .viewer-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            background: var(--color-bg-primary);
+            border-right: 1px solid var(--color-border);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .lesson-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .lesson-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lesson-btn:hover {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-primary);
+        }
+
+        .lesson-btn.active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .content-area {
+            padding: 2rem;
+            background: var(--color-bg-secondary);
+            overflow-y: auto;
+        }
+
+        .pdf-container {
+            position: relative;
+            background: white;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 80vh;
+            overflow: hidden;
+            user-select: none;
+            /* Disable text selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .pdf-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            background: transparent;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Hide toolbar if possible (browser dependent) */
+        iframe#pdfFrame {
+            pointer-events: none;
+            /* Block interactions within iframe if fully locked */
+        }
+    </style>
+</head>
+
+<body oncontextmenu="return false;"> <!-- Disable Right Click -->
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-icon">⟨/⟩</span>
+                <span class="logo-text">CodeNest</span>
+            </div>
+            <a href="courses.html" class="btn btn-secondary">Back to Courses</a>
+        </div>
+    </nav>
+
+    <div class="viewer-layout">
+        <aside class="sidebar">
+            <h3 id="courseTitle">Course Title</h3>
+            <div class="progress-bar-container" style="margin: 1rem 0;">
+                <div class="progress-bar-bg" style="background:#eee; height:6px; border-radius:3px;">
+                    <div id="courseProgress"
+                        style="background:var(--color-primary); width:0%; height:100%; border-radius:3px;"></div>
+                </div>
+                <small id="progressText">0% Complete</small>
+            </div>
+            <ul class="lesson-list" id="lessonList">
+                <!-- Lessons -->
+            </ul>
+        </aside>
+        <main class="content-area">
+            <div id="lessonContent" class="pdf-container">
+                <div class="pdf-overlay"></div> <!-- Blocks standard interaction -->
+                <iframe id="pdfFrame" src=""></iframe>
+            </div>
+            <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+                <button class="btn btn-secondary" onclick="prevLesson()">Previous</button>
+                <button class="btn btn-primary" onclick="markCompleteAndNext()">Mark Complete & Next</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        let currentLessonIndex = 0;
+        let course = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            course = dataManager.getCourseById(courseId);
+            if (!course) {
+                alert('Course not found');
+                window.location.href = 'courses.html';
+                return;
+            }
+            document.getElementById('courseTitle').textContent = course.title;
+            renderLessonList();
+            loadLesson(0);
+        });
+
+        function renderLessonList() {
+            const list = document.getElementById('lessonList');
+            const progress = dataManager.getUserProgress();
+
+            list.innerHTML = course.lessons.map((lesson, index) => {
+                const isComplete = progress.completedLessons.includes(lesson.id);
+                return `
+                <li class="lesson-item">
+                    <button class="lesson-btn ${index === currentLessonIndex ? 'active' : ''}" 
+                            onclick="loadLesson(${index})">
+                        <span style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                            <span>${index + 1}. ${lesson.title}</span>
+                            ${isComplete ? '<span style="color:var(--color-success);">✓</span>' : ''}
+                        </span>
+                    </button>
+                </li>
+            `}).join('');
+
+            // Update Progress Bar
+            const completedCount = course.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
+            const percent = Math.round((completedCount / course.lessons.length) * 100);
+            document.getElementById('courseProgress').style.width = `${percent}%`;
+            document.getElementById('progressText').textContent = `${percent}% Complete`;
+        }
+
+        function loadLesson(index) {
+            currentLessonIndex = index;
+            const lesson = course.lessons[index];
+            if (!lesson) return;
+
+            // Simulating PDF content view
+            const frame = document.getElementById('pdfFrame');
+            const blob = new Blob([`
+                <html><head><style>body{font-family:sans-serif;padding:2rem;} h1{color:#333;}</style></head>
+                <body><h1>${lesson.title}</h1><div style="white-space: pre-wrap; line-height:1.6;">${lesson.content}</div></body></html>
+            `], { type: 'text/html' });
+            frame.src = URL.createObjectURL(blob);
+
+            // Re-render list to show active state
+            renderLessonList();
+        }
+
+        function markCompleteAndNext() {
+            const lesson = course.lessons[currentLessonIndex];
+            const courseComplete = dataManager.markLessonComplete(lesson.id, course.id);
+
+            if (courseComplete) {
+                // Trigger confetti or celebration (optional expansion)
+            }
+
+            if (currentLessonIndex < course.lessons.length - 1) {
+                loadLesson(currentLessonIndex + 1);
+            } else {
+                renderLessonList(); // Just refresh UI
+                alert('Course Completed!');
+            }
+        }
+
+        function prevLesson() {
+            if (currentLessonIndex > 0) {
+                loadLesson(currentLessonIndex - 1);
+            }
+        }
+    </script>
+</body>
+
+</html>

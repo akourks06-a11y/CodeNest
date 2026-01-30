@@ -2,6 +2,16 @@
 // ADMIN DASHBOARD JAVASCRIPT
 // ========================================
 
+// Check authentication
+if (!sessionStorage.getItem('adminLoggedIn')) {
+    window.location.href = 'login.html';
+}
+
+function handleLogout() {
+    sessionStorage.removeItem('adminLoggedIn');
+    window.location.href = 'login.html';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initAdminDashboard();
 });

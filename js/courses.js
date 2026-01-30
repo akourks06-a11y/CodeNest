@@ -129,16 +129,23 @@ function loadCourses() {
     coursesGrid.innerHTML = courses.map(course => {
         const language = dataManager.getLanguageById(course.languageId);
         const levelClass = course.level.toLowerCase();
+        const isFavorite = dataManager.isFavorite(course.id);
+        const heartClass = isFavorite ? 'active' : '';
 
         return `
             <div class="course-card" onclick="navigateToCourse('${course.id}')">
                 <div class="course-header">
                     <div class="course-level ${levelClass}">${course.level}</div>
+                    <button class="favorite-btn ${heartClass}" onclick="toggleFavorite(event, '${course.id}')">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="${isFavorite ? 'currentColor' : 'none'}" stroke="currentColor">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </button>
                 </div>
                 <h3 class="course-title">${course.title}</h3>
                 <p class="course-description">${course.description}</p>
                 <div class="course-meta">
-                    <div class="course-rating">
+                    <div class="course-rating" onclick="openRatingModal(event, '${course.id}')">
                         <div class="stars">
                             ${createStars(course.rating)}
                         </div>
@@ -158,6 +165,32 @@ function loadCourses() {
     }).join('');
 }
 
+function toggleFavorite(e, courseId) {
+    e.stopPropagation(); // Prevent card click
+    const isFav = dataManager.toggleFavorite(courseId);
+
+    // Animate or just reload for simplicity
+    loadCourses(); // Re-render to show updated state
+}
+
+function openRatingModal(e, courseId) {
+    e.stopPropagation();
+    if (dataManager.hasUserRated(courseId)) {
+        alert('You have already rated this course.');
+        return;
+    }
+
+    // For prototype simplicity, use prompt. Ideal: Custom Modal.
+    const rating = parseFloat(prompt("Rate this course (1-5):"));
+    if (rating >= 1 && rating <= 5) {
+        dataManager.rateCourse(courseId, rating);
+        loadCourses();
+        alert('Thank you for rating!');
+    } else if (rating) {
+        alert('Please enter a valid number between 1 and 5.');
+    }
+}
+
 function navigateToCourse(courseId) {
-    window.location.href = `course.html?id=${courseId}`;
+    window.location.href = `course-viewer.html?courseId=${courseId}`;
 }

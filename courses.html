@@ -9,6 +9,30 @@
     <title>Courses - CodeNest</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/courses.css">
+    <style>
+        .favorite-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #cbd5e1;
+            transition: all 0.2s;
+        }
+
+        .favorite-btn:hover {
+            color: var(--color-error);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            color: var(--color-error);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link

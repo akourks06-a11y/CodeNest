@@ -45,11 +45,28 @@ function initNavigation() {
 
 // Home Page
 function initHomePage() {
-    // Animate stats
-    animateStats();
+    // Load real stats
+    loadRealStats();
 
     // Load languages
     loadLanguagesGrid();
+}
+
+function loadRealStats() {
+    // Get stats from DataManager
+    const stats = dataManager.getStats();
+
+    // Update DOM elements with targets
+    const coursesEl = document.getElementById('statCourses');
+    const languagesEl = document.getElementById('statLanguages');
+    const visitsEl = document.getElementById('statStudents');
+
+    if (coursesEl) coursesEl.setAttribute('data-target', stats.totalCourses);
+    if (languagesEl) languagesEl.setAttribute('data-target', stats.totalLanguages);
+    if (visitsEl) visitsEl.setAttribute('data-target', stats.totalVisits);
+
+    // Trigger animation
+    animateStats();
 }
 
 function animateStats() {

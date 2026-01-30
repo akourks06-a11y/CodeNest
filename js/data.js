@@ -465,6 +465,14 @@ Install Python and run these examples on your computer!`
         }
     }
 
+    getLessonById(courseId, lessonId) {
+        const course = this.getCourseById(courseId);
+        if (course && course.lessons) {
+            return course.lessons.find(l => l.id === lessonId);
+        }
+        return null;
+    }
+
     updateLanguageCourseCount(languageId) {
         const courses = this.getCoursesByLanguage(languageId);
         const language = this.getLanguageById(languageId);
@@ -537,12 +545,83 @@ Install Python and run these examples on your computer!`
         return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
 
+    // User Features (Progress, Favorites)
+    getUserProgress() {
+        return JSON.parse(localStorage.getItem('userProgress')) || { completedLessons: [], completedCourses: [] };
+    }
+
+    saveUserProgress(progress) {
+        localStorage.setItem('userProgress', JSON.stringify(progress));
+    }
+
+    markLessonComplete(lessonId, courseId) {
+        const progress = this.getUserProgress();
+        if (!progress.completedLessons.includes(lessonId)) {
+            progress.completedLessons.push(lessonId);
+            this.saveUserProgress(progress);
+        }
+
+        // Check if course is complete
+        const course = this.getCourseById(courseId);
+        if (course) {
+            const allLessonsComplete = course.lessons.every(l => progress.completedLessons.includes(l.id));
+            if (allLessonsComplete && !progress.completedCourses.includes(courseId)) {
+                progress.completedCourses.push(courseId);
+                this.saveUserProgress(progress);
+                return true; // Course just completed
+            }
+        }
+        return false;
+    }
+
+    isLessonComplete(lessonId) {
+        return this.getUserProgress().completedLessons.includes(lessonId);
+    }
+
+    getFavorites() {
+        return JSON.parse(localStorage.getItem('userFavorites')) || [];
+    }
+
+    toggleFavorite(courseId) {
+        let favorites = this.getFavorites();
+        if (favorites.includes(courseId)) {
+            favorites = favorites.filter(id => id !== courseId);
+        } else {
+            favorites.push(courseId);
+        }
+        localStorage.setItem('userFavorites', JSON.stringify(favorites));
+        return favorites.includes(courseId);
+    }
+
+    isFavorite(courseId) {
+        return this.getFavorites().includes(courseId);
+    }
+
+    // Ratings
+    hasUserRated(courseId) {
+        const ratedCourses = JSON.parse(localStorage.getItem('userRatedCourses')) || [];
+        return ratedCourses.includes(courseId);
+    }
+
+    rateCourse(courseId, rating) {
+        if (this.hasUserRated(courseId)) return null;
+
+        const course = this.addRating(courseId, rating); // Existing method
+        if (course) {
+            const ratedCourses = JSON.parse(localStorage.getItem('userRatedCourses')) || [];
+            ratedCourses.push(courseId);
+            localStorage.setItem('userRatedCourses', JSON.stringify(ratedCourses));
+        }
+        return course;
+    }
+
     // Statistics
     getStats() {
         const languages = this.getLanguages();
-        const courses = this.getCourses();
         const comments = this.getComments();
         const siteStats = this.getSiteStats();
+        // Calculate total real courses
+        const courses = this.getCourses();
 
         return {
             totalLanguages: languages.length,
