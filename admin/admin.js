@@ -28,6 +28,7 @@ function initAdminDashboard() {
     loadCoursesTable();
     loadCommentsAdmin();
     loadSocialMediaTable();
+    loadSiteSettings(); // Added this line
 }
 
 // Navigation

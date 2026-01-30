@@ -84,6 +84,15 @@
                     </svg>
                     <span>Social Media</span>
                 </a>
+                <a href="#settings" class="sidebar-link" data-section="settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                    <span>Settings</span>
+                </a>
             </nav>
         </aside>
 
@@ -91,18 +100,20 @@
         <main class="admin-main">
             <!-- Dashboard Section -->
             <section class="admin-section active" id="dashboard-section">
+                <!-- ... (Dashboard content unchanged) ... -->
                 <div class="section-header">
                     <h1 class="section-title">Dashboard</h1>
                     <p class="section-subtitle">Welcome to your admin panel</p>
                 </div>
 
-                <div class="stats-grid" id="statsGrid">
+                <div class="stats-grid" id="dashboard-stats-grid">
                     <!-- Stats will be loaded dynamically -->
                 </div>
             </section>
 
             <!-- Languages Section -->
             <section class="admin-section" id="languages-section">
+                <!-- ... (Languages content unchanged) ... -->
                 <div class="section-header">
                     <h1 class="section-title">Programming Languages</h1>
                     <button class="btn btn-primary" onclick="showAddLanguageModal()">
@@ -134,6 +145,7 @@
 
             <!-- Courses Section -->
             <section class="admin-section" id="courses-section">
+                <!-- ... (Courses content unchanged) ... -->
                 <div class="section-header">
                     <h1 class="section-title">Courses</h1>
                     <button class="btn btn-primary" onclick="showAddCourseModal()">
@@ -203,6 +215,73 @@
                             <!-- Social links will be loaded dynamically -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section class="admin-section" id="settings-section">
+                <div class="section-header">
+                    <h1 class="section-title">Site Settings</h1>
+                    <p class="section-subtitle">Customize your site Identity, Theme, and Features</p>
+                    <button class="btn btn-primary" onclick="saveSiteSettings()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Changes
+                    </button>
+                </div>
+
+                <div class="settings-container">
+                    <div class="settings-group">
+                        <h3>Identity</h3>
+                        <div class="form-group">
+                            <label>Site Name</label>
+                            <input type="text" id="settingSiteName" class="form-control" placeholder="CodeNest">
+                        </div>
+                        <div class="form-group">
+                            <label>Logo Text</label>
+                            <input type="text" id="settingLogoText" class="form-control" placeholder="CodeNest">
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Theme</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Primary Color</label>
+                                <input type="color" id="settingPrimaryColor" class="form-control"
+                                    style="height: 50px; padding: 5px;">
+                            </div>
+                            <div class="form-group">
+                                <label>Secondary Color</label>
+                                <input type="color" id="settingSecondaryColor" class="form-control"
+                                    style="height: 50px; padding: 5px;">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Font Family</label>
+                            <select id="settingFontFamily" class="form-control">
+                                <option value="Inter">Inter (Clean)</option>
+                                <option value="Roboto">Roboto (Google)</option>
+                                <option value="Segoe UI">Segoe UI (System)</option>
+                                <option value="Courier New">Courier New (Code)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Features</h3>
+                        <div class="form-check">
+                            <input type="checkbox" id="settingDarkMode">
+                            <label for="settingDarkMode">Enable Dark Mode Toggle</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="settingAnimations">
+                            <label for="settingAnimations">Enable Animations</label>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

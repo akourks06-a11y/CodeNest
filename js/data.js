@@ -42,6 +42,25 @@ class DataManager {
         if (!localStorage.getItem('siteStats')) {
             this.saveSiteStats({ totalVisits: 0, pageViews: {} });
         }
+
+        if (!localStorage.getItem('siteSettings')) {
+            const defaultSettings = {
+                identity: {
+                    siteName: 'CodeNest',
+                    logotext: 'CodeNest'
+                },
+                theme: {
+                    primaryColor: '#2563eb', // HSL 221
+                    secondaryColor: '#3b82f6', // HSL 217
+                    fontFamily: 'Inter'
+                },
+                features: {
+                    darkMode: true,
+                    animations: true
+                }
+            };
+            this.saveSiteSettings(defaultSettings);
+        }
     }
 
     // Languages
@@ -362,6 +381,19 @@ class DataManager {
 
     saveSiteStats(stats) {
         localStorage.setItem('siteStats', JSON.stringify(stats));
+    }
+
+    // Site Settings
+    getSiteSettings() {
+        return JSON.parse(localStorage.getItem('siteSettings')) || {
+            identity: { siteName: 'CodeNest', logotext: 'CodeNest' },
+            theme: { primaryColor: '#2563eb', secondaryColor: '#3b82f6', fontFamily: 'Inter' },
+            features: { darkMode: true, animations: true }
+        };
+    }
+
+    saveSiteSettings(settings) {
+        localStorage.setItem('siteSettings', JSON.stringify(settings));
     }
 
     incrementVisit() {

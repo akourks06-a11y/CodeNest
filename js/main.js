@@ -4,11 +4,40 @@
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    applySiteSettings();
     initNavigation();
     initHomePage();
     loadSocialLinks();
     trackVisit();
 });
+
+function applySiteSettings() {
+    const settings = dataManager.getSiteSettings();
+
+    // Identity
+    document.title = settings.identity.siteName + ' - CodeNest';
+    const logoText = document.querySelector('.logo-text');
+    if (logoText) logoText.textContent = settings.identity.logotext;
+
+    // Theme (Colors)
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', settings.theme.primaryColor);
+    root.style.setProperty('--color-secondary', settings.theme.secondaryColor);
+
+    // Theme (Fonts)
+    if (settings.theme.fontFamily !== 'Inter') {
+        root.style.setProperty('--font-primary', `"${settings.theme.fontFamily}", sans-serif`);
+    }
+
+    // Features (Animations)
+    if (!settings.features.animations) {
+        root.style.setProperty('--transition-base', '0s');
+        root.style.setProperty('--transition-slow', '0s');
+        const style = document.createElement('style');
+        style.innerHTML = `*, *::before, *::after { animation: none !important; transition: none !important; }`;
+        document.head.appendChild(style);
+    }
+}
 
 // Navigation
 function initNavigation() {
