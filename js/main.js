@@ -11,8 +11,71 @@ document.addEventListener('DOMContentLoaded', () => {
     trackVisit();
 });
 
+// ========================================
+// Ad Engine
+// ========================================
+class AdEngine {
+    static init() {
+        // Inject Header Ad
+        this.renderPlacement('header', document.querySelector('.hero-section') || document.querySelector('header'));
+
+        // Inject Footer Ad
+        this.renderPlacement('footer', document.querySelector('footer'));
+
+        // Inject Sidebar Ad (if exists)
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) this.renderPlacement('sidebar', sidebar);
+    }
+
+    static renderPlacement(placement, container, insertMethod = 'append') {
+        if (!container) return;
+
+        const ads = dataManager.getAds();
+        const validAds = ads.filter(ad =>
+            ad.settings.active &&
+            ad.placement === placement &&
+            (ad.settings.maxImpressions === 0 || ad.stats.impressions < ad.settings.maxImpressions)
+        );
+
+        if (validAds.length === 0) return;
+
+        // Randomly select an ad (or use priority logic in future)
+        const selectedAd = validAds[Math.floor(Math.random() * validAds.length)];
+
+        // Render Ad
+        const adElement = document.createElement('div');
+        adElement.className = 'ad-container';
+        adElement.setAttribute('data-ad-id', selectedAd.id);
+        adElement.style.margin = '2rem 0';
+        adElement.style.textAlign = 'center';
+
+        if (selectedAd.type === 'code') {
+            adElement.innerHTML = selectedAd.content.htmlCode;
+        } else {
+            adElement.innerHTML = `
+                <a href="${selectedAd.content.linkUrl || '#'}" target="_blank" rel="noopener noreferrer" onclick="AdEngine.recordClick('${selectedAd.id}')">
+                    <img src="${selectedAd.content.imageUrl}" alt="${selectedAd.name}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                </a>
+                <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-top: 0.5rem;">Advertisement</div>
+            `;
+        }
+
+        if (insertMethod === 'prepend') container.prepend(adElement);
+        else if (insertMethod === 'before') container.parentNode.insertBefore(adElement, container);
+        else container.appendChild(adElement);
+
+        // Record Impression
+        dataManager.recordAdImpression(selectedAd.id);
+    }
+
+    static recordClick(id) {
+        dataManager.recordAdClick(id);
+    }
+}
+
 function applySiteSettings() {
     const settings = dataManager.getSiteSettings();
+
 
     // Identity
     document.title = settings.identity.siteName + ' - CodeNest';
@@ -38,31 +101,8 @@ function applySiteSettings() {
         document.head.appendChild(style);
     }
 
-    // Ads (Header Banner)
-    if (settings.ads && settings.ads.headerAd.enabled) {
-        injectHeaderAd(settings.ads.headerAd);
-    }
-}
-
-function injectHeaderAd(adConfig) {
-    if (!adConfig.imageUrl) return;
-
-    const languagesSection = document.querySelector('.languages-section');
-    if (languagesSection) {
-        const adContainer = document.createElement('div');
-        adContainer.className = 'container';
-        adContainer.style.marginBottom = '2rem';
-        adContainer.style.textAlign = 'center';
-
-        adContainer.innerHTML = `
-            <a href="${adConfig.linkUrl || '#'}" target="_blank" rel="noopener noreferrer" style="display: inline-block; max-width: 100%; transition: transform 0.2s;">
-                <img src="${adConfig.imageUrl}" alt="Sponsored" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-            </a>
-            <div style="font-size: 0.75rem; color: var(--color-text-tertiary); margin-top: 0.5rem;">Advertisement</div>
-        `;
-
-        languagesSection.parentNode.insertBefore(adContainer, languagesSection);
-    }
+    // Initialize Advanced Ads
+    AdEngine.init();
 }
 
 // Navigation
@@ -192,6 +232,12 @@ function loadLanguagesGrid() {
             </div>
         </div>
     `).join('');
+
+    // Inject 'course_list' placement (interpreted as Category List for Home)
+    const categoryAd = dataManager.getAds().find(a => a.placement === 'course_list' && a.settings.active);
+    if (categoryAd) {
+        AdEngine.renderPlacement('course_list', grid, 'append');
+    }
 }
 
 function navigateToLanguage(languageId) {

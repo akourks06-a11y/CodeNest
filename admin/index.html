@@ -219,91 +219,202 @@
                 </div>
             </section>
 
-            <!-- Settings Section -->
+            <!-- Settings Section (Tabbed Interface) -->
             <section class="admin-section" id="settings-section">
                 <div class="section-header">
                     <h1 class="section-title">Site Settings</h1>
-                    <p class="section-subtitle">Customize your site Identity, Theme, and Features</p>
-                    <button class="btn btn-primary" onclick="saveSiteSettings()">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                            <polyline points="7 3 7 8 15 8"></polyline>
-                        </svg>
-                        Save Changes
-                    </button>
+                    <p class="section-subtitle">Manage your site Identity, Theme, and Monetization</p>
                 </div>
 
-                <div class="settings-container">
-                    <div class="settings-group">
-                        <h3>Identity</h3>
-                        <div class="form-group">
-                            <label>Site Name</label>
-                            <input type="text" id="settingSiteName" class="form-control" placeholder="CodeNest">
-                        </div>
-                        <div class="form-group">
-                            <label>Logo Text</label>
-                            <input type="text" id="settingLogoText" class="form-control" placeholder="CodeNest">
-                        </div>
-                    </div>
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="general">General & Theme</button>
+                    <button class="tab-btn" data-tab="ads">Ads Manager</button>
+                    <button class="tab-btn" data-tab="advanced">Advanced</button>
+                </div>
 
-                    <div class="settings-group">
-                        <h3>Theme</h3>
-                        <div class="form-row">
+                <!-- General Tab -->
+                <div class="settings-tab-content active" id="tab-general">
+                    <div class="settings-container">
+                        <div class="settings-group">
+                            <h3>Identity</h3>
                             <div class="form-group">
-                                <label>Primary Color</label>
-                                <input type="color" id="settingPrimaryColor" class="form-control"
-                                    style="height: 50px; padding: 5px;">
+                                <label>Site Name</label>
+                                <input type="text" id="settingSiteName" class="form-control" placeholder="CodeNest">
                             </div>
                             <div class="form-group">
-                                <label>Secondary Color</label>
-                                <input type="color" id="settingSecondaryColor" class="form-control"
-                                    style="height: 50px; padding: 5px;">
+                                <label>Logo Text</label>
+                                <input type="text" id="settingLogoText" class="form-control" placeholder="CodeNest">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label>Font Family</label>
-                            <select id="settingFontFamily" class="form-control">
-                                <option value="Inter">Inter (Clean)</option>
-                                <option value="Roboto">Roboto (Google)</option>
-                                <option value="Segoe UI">Segoe UI (System)</option>
-                                <option value="Courier New">Courier New (Code)</option>
-                            </select>
+
+                        <div class="settings-group">
+                            <h3>Theme</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Primary Color</label>
+                                    <input type="color" id="settingPrimaryColor" class="form-control"
+                                        style="height: 50px; padding: 5px;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Secondary Color</label>
+                                    <input type="color" id="settingSecondaryColor" class="form-control"
+                                        style="height: 50px; padding: 5px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Font Family</label>
+                                <select id="settingFontFamily" class="form-control">
+                                    <option value="Inter">Inter (Clean)</option>
+                                    <option value="Roboto">Roboto (Google)</option>
+                                    <option value="Segoe UI">Segoe UI (System)</option>
+                                    <option value="Courier New">Courier New (Code)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3>Features</h3>
+                            <div class="form-check">
+                                <input type="checkbox" id="settingDarkMode">
+                                <label for="settingDarkMode">Enable Dark Mode Toggle</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" id="settingAnimations">
+                                <label for="settingAnimations">Enable Animations</label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" onclick="saveSiteSettings()">Save General Settings</button>
                         </div>
                     </div>
+                </div>
 
-                    <div class="settings-group">
-                        <h3>Features</h3>
-                        <div class="form-check">
-                            <input type="checkbox" id="settingDarkMode">
-                            <label for="settingDarkMode">Enable Dark Mode Toggle</label>
+                <!-- Ads Manager Tab -->
+                <div class="settings-tab-content" id="tab-ads">
+                    <div class="settings-container">
+                        <div class="section-header" style="margin-bottom: 2rem;">
+                            <div>
+                                <h3>Ad Campaigns</h3>
+                                <p style="color: var(--color-text-tertiary);">Manage your ad placements and performance
+                                </p>
+                            </div>
+                            <button class="btn btn-primary" onclick="showAddAdModal()">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                New Ad
+                            </button>
                         </div>
-                        <div class="form-check">
-                            <input type="checkbox" id="settingAnimations">
-                            <label for="settingAnimations">Enable Animations</label>
+
+                        <div class="admin-table-container">
+                            <table class="admin-table" id="adsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Placement</th>
+                                        <th>Impressions</th>
+                                        <th>Clicks</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Ads loaded dynamically -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                </div>
 
-                    <div class="settings-group">
-                        <h3>Ads & Monetization</h3>
-                        <div class="form-check">
-                            <input type="checkbox" id="settingHeaderAdEnabled">
-                            <label for="settingHeaderAdEnabled">Enable Header Banner (Home Page)</label>
-                        </div>
-                        <div class="form-group">
-                            <label>Banner Image URL</label>
-                            <input type="text" id="settingHeaderAdImage" class="form-control"
-                                placeholder="https://example.com/banner.jpg">
-                        </div>
-                        <div class="form-group">
-                            <label>Target Link URL</label>
-                            <input type="text" id="settingHeaderAdLink" class="form-control"
-                                placeholder="https://example.com">
+                <!-- Advanced Tab -->
+                <div class="settings-tab-content" id="tab-advanced">
+                    <div class="settings-container">
+                        <div class="settings-group">
+                            <h3>Danger Zone</h3>
+                            <p style="margin-bottom: 1rem; color: var(--color-text-tertiary);">Reset specific data sets.
+                                This action cannot be undone.</p>
+                            <button class="btn" style="background: var(--color-error); color: white;"
+                                onclick="alert('Feature coming soon')">Reset All Stats</button>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Custom Modal for Adding Ads -->
+    <div id="addAdModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Create New Ad Campaign</h2>
+                <button class="close-modal" onclick="closeAdModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addAdForm" onsubmit="handleAdSubmit(event)">
+                    <div class="form-group">
+                        <label>Ad Name (Internal)</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g., Summer Promotion"
+                            required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Placement</label>
+                            <select name="placement" class="form-control">
+                                <option value="header">Home Header (Top)</option>
+                                <option value="footer">Footer (All Pages)</option>
+                                <option value="sidebar">Sidebar (Admin/Courses)</option>
+                                <option value="course_list">Between Courses</option>
+                                <option value="viewer">Lesson Viewer (Below Content)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ad Type</label>
+                            <select name="type" class="form-control" onchange="toggleAdType(this.value)">
+                                <option value="image">Image Banner</option>
+                                <option value="code">HTML/JS Code</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Image Fields -->
+                    <div id="adTypeImage">
+                        <div class="form-group">
+                            <label>Image URL</label>
+                            <input type="text" name="imageUrl" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label>Target Link</label>
+                            <input type="text" name="linkUrl" class="form-control" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <!-- Code Fields -->
+                    <div id="adTypeCode" style="display: none;">
+                        <div class="form-group">
+                            <label>Ad Code (HTML/Script)</label>
+                            <textarea name="htmlCode" class="form-control" rows="5"
+                                placeholder="<script>...</script>"></textarea>
+                            <small style="color: var(--color-text-tertiary);">Paste your AdSense or custom HTML code
+                                here.</small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max Impressions (0 = Unlimited)</label>
+                        <input type="number" name="maxImpressions" class="form-control" value="0">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeAdModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Ad</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Modals will be added dynamically -->

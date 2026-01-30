@@ -58,12 +58,18 @@ class DataManager {
                     darkMode: true,
                     animations: true
                 },
-                ads: {
-                    headerAd: { enabled: false, imageUrl: '', linkUrl: '' },
-                    sidebarAd: { enabled: false, imageUrl: '', linkUrl: '' }
+                // Legacy simple ads object can be kept for migration or removed. 
+                // We will use the new 'ads' collection for the advanced system.
+                monetization: {
+                    enabled: true
                 }
             };
             this.saveSiteSettings(defaultSettings);
+        }
+
+        if (!localStorage.getItem('ads')) {
+            // New Advanced Ads Collection
+            this.saveAds([]);
         }
     }
 
@@ -403,6 +409,90 @@ class DataManager {
     saveSiteSettings(settings) {
         localStorage.setItem('siteSettings', JSON.stringify(settings));
     }
+
+    // ==========================================
+    // Advanced Ads System
+    // ==========================================
+    getAds() {
+        return JSON.parse(localStorage.getItem('ads')) || [];
+    }
+
+    saveAds(ads) {
+        localStorage.setItem('ads', JSON.stringify(ads));
+    }
+
+    addAd(adData) {
+        const ads = this.getAds();
+        const newAd = {
+            id: Date.now().toString(),
+            name: adData.name || 'New Ad',
+            type: adData.type || 'image', // 'image' or 'code'
+            placement: adData.placement || 'header', // 'header', 'footer', 'sidebar', 'course_list', 'viewer'
+            content: {
+                imageUrl: adData.content?.imageUrl || '',
+                linkUrl: adData.content?.linkUrl || '',
+                htmlCode: adData.content?.htmlCode || ''
+            },
+            settings: {
+                active: adData.settings?.active ?? true,
+                startDate: adData.settings?.startDate || null,
+                endDate: adData.settings?.endDate || null,
+                maxImpressions: adData.settings?.maxImpressions || 0 // 0 = unlimited
+            },
+            stats: {
+                impressions: 0,
+                clicks: 0,
+                lastShown: null
+            },
+            createdAt: new Date().toISOString()
+        };
+        ads.push(newAd);
+        this.saveAds(ads);
+        return newAd;
+    }
+
+    updateAd(id, updates) {
+        const ads = this.getAds();
+        const index = ads.findIndex(a => a.id === id);
+        if (index !== -1) {
+            ads[index] = { ...ads[index], ...updates };
+            this.saveAds(ads);
+            return true;
+        }
+        return false;
+    }
+
+    deleteAd(id) {
+        const ads = this.getAds();
+        const newAds = ads.filter(a => a.id !== id);
+        this.saveAds(newAds);
+    }
+
+    recordAdImpression(id) {
+        const ads = this.getAds();
+        const ad = ads.find(a => a.id === id);
+        if (ad) {
+            ad.stats.impressions++;
+            ad.stats.lastShown = new Date().toISOString();
+
+            // Auto-disable if limit reached
+            if (ad.settings.maxImpressions > 0 && ad.stats.impressions >= ad.settings.maxImpressions) {
+                ad.settings.active = false;
+            }
+
+            this.saveAds(ads);
+        }
+    }
+
+    recordAdClick(id) {
+        const ads = this.getAds();
+        const ad = ads.find(a => a.id === id);
+        if (ad) {
+            ad.stats.clicks++;
+            this.saveAds(ads);
+        }
+    }
+    // ==========================================
 
     incrementVisit() {
         const stats = this.getSiteStats();
